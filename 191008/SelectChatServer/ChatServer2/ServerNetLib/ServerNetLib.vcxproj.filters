@@ -6,9 +6,11 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="ILog.h" />
     <ClInclude Include="ITcpNetwork.h" />
+    <ClInclude Include="Runnable.h" />
     <ClInclude Include="NonCopyable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TcpNetwork.cpp" />
+    <ClCompile Include="Runnable.cpp" />
   </ItemGroup>
 </Project>

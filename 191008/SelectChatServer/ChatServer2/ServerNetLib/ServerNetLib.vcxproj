@@ -23,10 +23,12 @@
     <ClInclude Include="ILog.h" />
     <ClInclude Include="ITcpNetwork.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="Runnable.h" />
     <ClInclude Include="ServerNetErrorCode.h" />
     <ClInclude Include="TcpNetwork.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Runnable.cpp" />
     <ClCompile Include="TcpNetwork.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
