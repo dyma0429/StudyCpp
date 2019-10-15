@@ -22,6 +22,7 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="ILog.h" />
     <ClInclude Include="ITcpNetwork.h" />
+    <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="ServerNetErrorCode.h" />
     <ClInclude Include="TcpNetwork.h" />
   </ItemGroup>
