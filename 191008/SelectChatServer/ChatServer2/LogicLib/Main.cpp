@@ -90,6 +90,11 @@ namespace NLogicLib
 			}
 
 			m_pPacketProc->StateCheck();
+
+			{
+				using namespace std::chrono;
+				std::this_thread::sleep_for( 16ms );
+			}
 		}
 	}
 
