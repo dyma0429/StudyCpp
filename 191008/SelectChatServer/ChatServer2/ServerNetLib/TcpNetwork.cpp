@@ -61,6 +61,8 @@ namespace NServerNetLib
 			
 		m_pRefLogger->Write(LOG_TYPE::L_INFO, "%s | Session Pool Size: %d", __FUNCTION__, sessionPoolSize);
 
+		Start();
+
 		return NET_ERROR_CODE::NONE;
 	}
 
@@ -75,10 +77,13 @@ namespace NServerNetLib
 	{
 		RecvPacketInfo packetInfo;
 
-		if (m_PacketQueue.empty() == false)
 		{
-			packetInfo = m_PacketQueue.front();
-			m_PacketQueue.pop_front();
+			std::lock_guard< std::mutex > lock( lockObject );
+			if ( m_PacketQueue.empty() == false )
+			{
+				packetInfo = m_PacketQueue.front();
+				m_PacketQueue.pop_front();
+			}
 		}
 				
 		return packetInfo;
@@ -95,29 +100,42 @@ namespace NServerNetLib
 
 	void TcpNetwork::Run()
 	{
-		auto read_set = m_Readfds;
-		//연결된 모든 세션을 write 이벤트를 조사하고 있는데 사실 다 할 필요는 없다. 이전에 send 버퍼가 다 찼던 세션만 조사해도 된다.
-		auto write_set = m_Readfds;
-		
-		timeval timeout{ 0, 1000 }; //tv_sec, tv_usec
-#ifdef _WIN32
-        auto selectResult = select(0, &read_set, &write_set, 0, &timeout);
-#else
-        auto selectResult = select(m_MaxSockFD+1, &read_set, &write_set, 0, &timeout);
-#endif
-		auto isFDSetChanged = RunCheckSelectResult(selectResult);
-		if (isFDSetChanged == false)
+		while ( IsRun() )
 		{
-			return;
-		}
+			fd_set read_set;
+			fd_set write_set;
+			{
+				std::lock_guard< std::mutex > lock( lockObject );
 
-		// Accept
-		if (FD_ISSET(m_ServerSockfd, &read_set))
-		{
-			NewSession();
+				read_set = m_Readfds;
+				//연결된 모든 세션을 write 이벤트를 조사하고 있는데 사실 다 할 필요는 없다. 이전에 send 버퍼가 다 찼던 세션만 조사해도 된다.
+				write_set = m_Readfds;
+			}
+			timeval timeout{ 0, 1000 }; //tv_sec, tv_usec
+#ifdef _WIN32
+			auto selectResult = select( 0, &read_set, &write_set, 0, &timeout );
+#else
+			auto selectResult = select( m_MaxSockFD + 1, &read_set, &write_set, 0, &timeout );
+#endif
+			auto isFDSetChanged = RunCheckSelectResult( selectResult );
+			if ( isFDSetChanged == false )
+			{
+				continue;
+			}
+
+
+			{
+				std::lock_guard< std::mutex > lock( lockObject );
+
+				// Accept
+				if ( FD_ISSET( m_ServerSockfd, &read_set ) )
+				{
+					NewSession();
+				}
+
+				RunCheckSelectClients( read_set, write_set );
+			}
 		}
-		
-		RunCheckSelectClients(read_set, write_set);
 	}
 
 	bool TcpNetwork::RunCheckSelectResult(const int result)

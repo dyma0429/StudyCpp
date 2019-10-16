@@ -21,11 +21,12 @@
 #include <deque>
 #include <unordered_map>
 #include "ITcpNetwork.h"
-
+#include "Runnable.h"
+#include <mutex>
 
 namespace NServerNetLib
 {
-	class TcpNetwork : public ITcpNetwork
+	class TcpNetwork : public ITcpNetwork, public Runnable
 	{
 	public:
 		TcpNetwork();
@@ -91,5 +92,7 @@ namespace NServerNetLib
 		std::deque<RecvPacketInfo> m_PacketQueue;
 
 		ILog* m_pRefLogger;
+
+		std::mutex lockObject;
 	};
 }

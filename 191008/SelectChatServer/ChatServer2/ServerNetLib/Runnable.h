@@ -16,16 +16,16 @@ namespace NServerNetLib
 		void Start();
 		void Stop();
 
-		inline bool IsStop()
+		inline bool IsRun()
 		{
-			return isStopped;
+			return isRun;
 		}
 
 	protected:
 		virtual void Run() = 0;
 
 	private:
-		std::atomic_bool isStopped;
+		std::atomic_bool isRun;
 		std::thread runThread;
 	};
 }

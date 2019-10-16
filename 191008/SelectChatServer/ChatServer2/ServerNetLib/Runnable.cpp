@@ -15,7 +15,7 @@ namespace NServerNetLib
 
 	void Runnable::Stop()
 	{
-		isStopped = true;
+		isRun = false;
 		runThread.join();
 	}
 

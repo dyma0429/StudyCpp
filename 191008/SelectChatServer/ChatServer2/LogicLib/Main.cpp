@@ -75,8 +75,6 @@ namespace NLogicLib
 	{
 		while (m_IsRun)
 		{
-			m_pNetwork->Run();
-
 			while (true)
 			{				
 				auto packetInfo = m_pNetwork->GetPacketInfo();
