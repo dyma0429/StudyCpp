@@ -80,15 +80,8 @@ namespace NLogicLib
 		while ( IsRun() )
 		{
 			auto packetInfo = m_pRefNetwork->GetPacketInfo();
-			if ( packetInfo.PacketId != 0 )
-			{
-				Process( packetInfo );
-			}
+			Process( packetInfo );
 			StateCheck();
-			{
-				using namespace std::chrono;
-				std::this_thread::sleep_for( 16ms );
-			}
 		}
 	}
 

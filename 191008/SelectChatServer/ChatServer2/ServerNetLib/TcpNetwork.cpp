@@ -13,6 +13,7 @@
 
 #include "ILog.h"
 #include "TcpNetwork.h"
+#include <mutex>
 
 
 namespace NServerNetLib
@@ -78,17 +79,11 @@ namespace NServerNetLib
 
 	RecvPacketInfo TcpNetwork::GetPacketInfo()
 	{
-		RecvPacketInfo packetInfo;
+		std::unique_lock< std::mutex > lock( lockObject );
+		cv.wait( lock, [ this ] { return !m_PacketQueue.empty(); } );
+		RecvPacketInfo packetInfo = m_PacketQueue.front();
+		m_PacketQueue.pop_front();
 
-		{
-			std::lock_guard< std::mutex > lock( lockObject );
-			if ( m_PacketQueue.empty() == false )
-			{
-				packetInfo = m_PacketQueue.front();
-				m_PacketQueue.pop_front();
-			}
-		}
-				
 		return packetInfo;
 	}
 		
@@ -549,6 +544,8 @@ namespace NServerNetLib
 		packetInfo.pRefData = pDataPos;
 
 		m_PacketQueue.push_back(packetInfo);
+
+		cv.notify_one();
 	}
 
 	void TcpNetwork::RunProcessWrite(const int sessionIndex, const SOCKET fd, fd_set& write_set)

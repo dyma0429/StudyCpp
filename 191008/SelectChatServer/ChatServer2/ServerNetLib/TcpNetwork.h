@@ -94,5 +94,6 @@ namespace NServerNetLib
 		ILog* m_pRefLogger;
 
 		std::mutex lockObject;
+		std::condition_variable cv;
 	};
 }
