@@ -4,6 +4,7 @@
 #include "../../Common/Packet.h"
 #include "../../Common/ErrorCode.h"
 #include "../ServerNetLib/Define.h"
+#include "../ServerNetLib/Runnable.h"
 
 using ERROR_CODE = NCommon::ERROR_CODE;
 
@@ -21,7 +22,7 @@ namespace NLogicLib
 
 	using ServerConfig = NServerNetLib::ServerConfig;
 
-	class PacketProcess
+	class PacketProcess : public NServerNetLib::Runnable
 	{
 		using PacketInfo = NServerNetLib::RecvPacketInfo;
 		typedef ERROR_CODE(PacketProcess::*PacketFunc)(PacketInfo);
@@ -39,6 +40,8 @@ namespace NLogicLib
 		void Process(PacketInfo packetInfo);
 
 		void StateCheck();
+
+		void Run() override;
 	
 	private:
 		ILog* m_pRefLogger;

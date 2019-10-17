@@ -75,22 +75,6 @@ namespace NLogicLib
 	{
 		while (m_IsRun)
 		{
-			while (true)
-			{				
-				auto packetInfo = m_pNetwork->GetPacketInfo();
-
-				if (packetInfo.PacketId == 0)
-				{
-					break;
-				}
-				else
-				{
-					m_pPacketProc->Process(packetInfo);
-				}
-			}
-
-			m_pPacketProc->StateCheck();
-
 			{
 				using namespace std::chrono;
 				std::this_thread::sleep_for( 16ms );

@@ -16,7 +16,11 @@ using ServerConfig = NServerNetLib::ServerConfig;
 namespace NLogicLib
 {	
 	PacketProcess::PacketProcess() {}
-	PacketProcess::~PacketProcess() {}
+	PacketProcess::~PacketProcess() 
+	{
+		// 쓰레드가 먼저 멈추고 나머지 다른 객체가 소멸되어야 해서 Stop을 명시적 호출
+		Stop();
+	}
 
 	void PacketProcess::Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ServerConfig* pConfig, ILog* pLogger)
 	{
@@ -50,6 +54,8 @@ namespace NLogicLib
 
 
 		PacketFuncArray[(int)commonPacketId::DEV_ECHO_REQ] = &PacketProcess::DevEcho;
+
+		Start();
 	}
 	
 	void PacketProcess::Process(PacketInfo packetInfo)
@@ -69,7 +75,24 @@ namespace NLogicLib
 		m_pConnectedUserManager->LoginCheck();
 	}
 
-	ERROR_CODE PacketProcess::NtfSysConnctSession(PacketInfo packetInfo)
+	void PacketProcess::Run()
+	{
+		while ( IsRun() )
+		{
+			auto packetInfo = m_pRefNetwork->GetPacketInfo();
+			if ( packetInfo.PacketId != 0 )
+			{
+				Process( packetInfo );
+			}
+			StateCheck();
+			{
+				using namespace std::chrono;
+				std::this_thread::sleep_for( 16ms );
+			}
+		}
+	}
+
+	ERROR_CODE PacketProcess::NtfSysConnctSession( PacketInfo packetInfo )
 	{
 		m_pConnectedUserManager->SetConnectSession(packetInfo.SessionIndex);
 		return ERROR_CODE::NONE;

@@ -24,6 +24,9 @@ namespace NServerNetLib
 	
 	TcpNetwork::~TcpNetwork() 
 	{
+		// 쓰레드가 먼저 멈추고 나머지 다른 객체가 소멸되어야 해서 Stop을 명시적 호출
+		Stop();
+
 		for (auto& client : m_ClientSessionPool)
 		{
 			if (client.pRecvBuffer) {
