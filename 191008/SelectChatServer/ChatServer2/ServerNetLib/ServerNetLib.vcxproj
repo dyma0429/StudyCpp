@@ -23,11 +23,13 @@
     <ClInclude Include="ILog.h" />
     <ClInclude Include="ITcpNetwork.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="RedisConnectionPool.h" />
     <ClInclude Include="Runnable.h" />
     <ClInclude Include="ServerNetErrorCode.h" />
     <ClInclude Include="TcpNetwork.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RedisConnectionPool.cpp" />
     <ClCompile Include="Runnable.cpp" />
     <ClCompile Include="TcpNetwork.cpp" />
   </ItemGroup>
@@ -82,7 +84,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)..\include;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)..\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>

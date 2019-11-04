@@ -8,9 +8,11 @@
     <ClInclude Include="ITcpNetwork.h" />
     <ClInclude Include="Runnable.h" />
     <ClInclude Include="NonCopyable.h" />
+    <ClInclude Include="RedisConnectionPool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TcpNetwork.cpp" />
     <ClCompile Include="Runnable.cpp" />
+    <ClCompile Include="RedisConnectionPool.cpp" />
   </ItemGroup>
 </Project>
